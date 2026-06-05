@@ -1,25 +1,14 @@
-import { useContext } from "react";
-import { CartContext } from "../../context/CartContext";
 import useRenderCount from "../../hooks/useRenderCount";
+import useAppStore from "../../store/useAppStore";
 
 function ProductCard({ product }) {
-  const { dispatch } =
-    useContext(CartContext);
+  const addToCart =
+    useAppStore(
+      (state) => state.addToCart
+    );
 
   const renderCount =
     useRenderCount();
-
-  const addToCart = () => {
-    dispatch({
-      type: "ADD_TO_CART",
-      payload: {
-        productId: product.id,
-        name: product.name,
-        price: product.price,
-        quantity: 1,
-      },
-    });
-  };
 
   return (
     <div className="product-card">
@@ -32,12 +21,18 @@ function ProductCard({ product }) {
 
       <p>₹{product.price}</p>
 
-      <button onClick={addToCart}>
+      <button
+        onClick={() =>
+          addToCart(product)
+        }
+      >
         Add To Cart
       </button>
 
       <small data-testid="render-count">
-        Render Count: {renderCount}
+        Render Count:
+        {" "}
+        {renderCount}
       </small>
     </div>
   );

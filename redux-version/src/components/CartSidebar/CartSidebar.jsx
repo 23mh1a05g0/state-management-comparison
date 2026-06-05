@@ -1,0 +1,57 @@
+import { useSelector }
+from "react-redux";
+
+import CartItem
+from "../CartItem/CartItem";
+
+import useRenderCount
+from "../../hooks/useRenderCount";
+
+function CartSidebar() {
+
+  const items =
+    useSelector(
+      (state) =>
+        state.cart.items
+    );
+
+  const renderCount =
+    useRenderCount();
+
+  return (
+    <aside className="sidebar">
+
+      <h3>Cart Items</h3>
+
+      <small data-testid="render-count">
+        Render Count:
+        {" "}
+        {renderCount}
+      </small>
+
+      {items.length === 0 ? (
+        <p>No items in cart</p>
+      ) : (
+        items.map(
+          (item, index) => (
+            <CartItem
+              key={index}
+              item={item}
+            />
+          )
+        )
+      )}
+
+      <hr />
+
+      <h4>
+        Total Items:
+        {" "}
+        {items.length}
+      </h4>
+
+    </aside>
+  );
+}
+
+export default CartSidebar;

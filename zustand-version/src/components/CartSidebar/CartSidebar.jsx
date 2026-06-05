@@ -1,11 +1,12 @@
-import { useContext } from "react";
-import { CartContext } from "../../context/CartContext";
 import CartItem from "../CartItem/CartItem";
 import useRenderCount from "../../hooks/useRenderCount";
+import useAppStore from "../../store/useAppStore";
 
 function CartSidebar() {
-  const { state } =
-    useContext(CartContext);
+  const items =
+    useAppStore(
+      (state) => state.cart.items
+    );
 
   const renderCount =
     useRenderCount();
@@ -15,13 +16,15 @@ function CartSidebar() {
       <h3>Cart Items</h3>
 
       <small data-testid="render-count">
-        Render Count: {renderCount}
+        Render Count:
+        {" "}
+        {renderCount}
       </small>
 
-      {state.items.length === 0 ? (
+      {items.length === 0 ? (
         <p>No items in cart</p>
       ) : (
-        state.items.map((item, index) => (
+        items.map((item, index) => (
           <CartItem
             key={index}
             item={item}
@@ -34,7 +37,7 @@ function CartSidebar() {
       <h4>
         Total Items:
         {" "}
-        {state.items.length}
+        {items.length}
       </h4>
     </aside>
   );
