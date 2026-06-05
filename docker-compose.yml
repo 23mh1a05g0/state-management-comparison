@@ -1,0 +1,27 @@
+# version: "3.9"
+
+services:
+
+  context-api:
+    build:
+      context: ./context-version
+    container_name: context-api-app
+    ports:
+      - "3001:80"
+    restart: unless-stopped
+
+  zustand:
+    build:
+      context: ./zustand-version
+    container_name: zustand-app
+    ports:
+      - "3002:80"
+    restart: unless-stopped
+
+  redux-toolkit:
+    build:
+      context: ./redux-version
+    container_name: redux-toolkit-app
+    ports:
+      - "3003:80"
+    restart: unless-stopped
