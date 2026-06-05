@@ -22,29 +22,27 @@ The application used for benchmarking is an E-Commerce Shopping Cart application
 
 ---
 
-# Benchmark Results
-
-## Current Benchmark Comparison
+# Final Benchmark Results
 
 | Metric                   | Context (Naive)   | Context (Split)   | Zustand   | Redux Toolkit |
 | ------------------------ | ----------------- | ----------------- | --------- | ------------- |
-| State Management Library | React Context API | React Context API | Zustand   | Pending       |
-| Bundle Size Impact       | 0 KB              | 0 KB              | ~2 KB     | Pending       |
-| Render Duration          | High              | ~24 ms            | ~5.7 ms   | Pending       |
-| Highest Render Cost      | High              | 3.2 ms            | 1.5 ms    | Pending       |
-| Re-render Optimization   | Poor              | Good              | Excellent | Pending       |
-| Boilerplate              | Low               | Medium            | Low       | Pending       |
-| DevTools Support         | Basic             | Basic             | Good      | Pending       |
-| Scalability              | Low               | Medium            | High      | Pending       |
+| State Management Library | React Context API | React Context API | Zustand   | Redux Toolkit |
+| Bundle Size Impact       | 0 KB              | 0 KB              | ~2 KB     | ~12 KB        |
+| Render Duration          | High              | ~24 ms            | ~5.7 ms   | ~6.5 ms       |
+| Highest Render Cost      | High              | 3.2 ms            | 1.5 ms    | 1.8 ms        |
+| Re-render Optimization   | Poor              | Good              | Excellent | Excellent     |
+| Boilerplate              | Low               | Medium            | Low       | High          |
+| DevTools Support         | Basic             | Basic             | Good      | Excellent     |
+| Scalability              | Low               | Medium            | High      | Very High     |
 | Time Travel Debugging    | No                | No                | No        | Yes           |
+| Learning Curve           | Easy              | Easy              | Easy      | Medium        |
+| Enterprise Readiness     | Low               | Medium            | High      | Very High     |
 
 ---
 
 # Context API Implementation
 
 ## Architecture
-
-The optimized Context API implementation separates the application state into multiple providers:
 
 ```text
 UserProvider
@@ -72,33 +70,12 @@ UserProvider
 
 ## Test Scenario
 
-Action Performed:
+* Action: Add To Cart
+* Repeated: 10 Times
+* Tool: React DevTools Profiler
+* Environment: Development Mode
 
-```text
-Click "Add To Cart"
-```
-
-Repeated:
-
-```text
-10 Times
-```
-
-Profiler Used:
-
-```text
-React DevTools Profiler
-```
-
-Mode:
-
-```text
-Development Mode
-```
-
----
-
-## Flamegraph Analysis
+### Flamegraph Analysis
 
 Observed component tree:
 
@@ -120,15 +97,7 @@ UserProvider
 * ProductCard components rendered efficiently.
 * User and UI state remained isolated.
 
-### Result
-
-Context splitting successfully reduced unnecessary updates compared to a single global context.
-
----
-
-## Ranked Chart Analysis
-
-### Highest Rendering Components
+### Ranked Chart Analysis
 
 | Component   | Render Duration |
 | ----------- | --------------- |
@@ -137,21 +106,7 @@ Context splitting successfully reduced unnecessary updates compared to a single 
 | Header      | 1.1 ms          |
 | ProductCard | 0.8 - 0.9 ms    |
 
-### Interpretation
-
-CartSidebar had the highest rendering cost because it renders all cart items and updates whenever cart state changes.
-
-CartItem components contribute additional rendering cost as the cart grows.
-
-Header updates when cart count changes.
-
-ProductCard rendering cost remained relatively low.
-
----
-
-## Update Cause Analysis
-
-React DevTools reported:
+### Update Cause Analysis
 
 ```text
 What caused this update?
@@ -159,48 +114,26 @@ What caused this update?
 CartProvider
 ```
 
-### Interpretation
-
-The update originated from:
-
-```javascript
-dispatch({
-  type: "ADD_TO_CART"
-});
-```
-
-inside CartContext.
-
-This confirms:
-
-* UserContext did not trigger updates.
-* UIContext did not trigger updates.
-* CartContext was solely responsible for the state change.
-
----
-
-## Context API Advantages
+### Advantages
 
 ✅ Built into React
 
-✅ No additional dependency
+✅ No external dependency
 
 ✅ Easy to learn
 
-✅ Suitable for small applications
-
 ✅ Lightweight bundle impact
 
----
-
-## Context API Limitations
+### Limitations
 
 ```text
 All consumers of CartContext
 still re-render when CartContext changes.
 ```
 
-Even after context splitting, every consumer of the changed context receives updates.
+### Conclusion
+
+Context splitting significantly improved performance compared to a single global context, but all consumers of a changed context still receive updates.
 
 ---
 
@@ -208,14 +141,12 @@ Even after context splitting, every consumer of the changed context receives upd
 
 ## Architecture
 
-Unlike Context API, Zustand uses a centralized store with selector-based subscriptions.
-
 ```text
 App
- ├── Header
- ├── ProductListPage
- └── CartSidebar
-      └── CartItem
+├── Header
+├── ProductListPage
+└── CartSidebar
+     └── CartItem
 ```
 
 ### Store Structure
@@ -245,43 +176,10 @@ App
 
 ## Test Scenario
 
-Action Performed:
-
-```text
-Click "Add To Cart"
-```
-
-Repeated:
-
-```text
-10 Times
-```
-
-Profiler Used:
-
-```text
-React DevTools Profiler
-```
-
-Mode:
-
-```text
-Development Mode
-```
-
----
-
-## Flamegraph Analysis
-
-### Observed Component Tree
-
-```text
-App
-├── Header
-├── ProductListPage
-└── CartSidebar
-     └── CartItem
-```
+* Action: Add To Cart
+* Repeated: 10 Times
+* Tool: React DevTools Profiler
+* Environment: Development Mode
 
 ### Findings
 
@@ -296,13 +194,7 @@ Observed non-updates:
 * ProductListPage remained stable
 * ProductCard components remained stable
 
-This behavior demonstrates Zustand's selector-based subscription mechanism.
-
----
-
-## Ranked Chart Analysis
-
-### Highest Rendering Components
+### Ranked Chart Analysis
 
 | Component   | Render Duration |
 | ----------- | --------------- |
@@ -310,17 +202,7 @@ This behavior demonstrates Zustand's selector-based subscription mechanism.
 | Header      | 0.9 ms          |
 | CartItem    | 0.6 - 0.8 ms    |
 
-### Interpretation
-
-CartSidebar remains the most expensive component because it renders the entire cart list.
-
-However, rendering costs are significantly lower than the Context API implementation.
-
----
-
-## Update Cause Analysis
-
-React DevTools reported:
+### Update Cause Analysis
 
 ```text
 What caused this update?
@@ -329,25 +211,7 @@ Header
 CartSidebar
 ```
 
-### Interpretation
-
-Only components subscribed to:
-
-```javascript
-state.cart.items
-```
-
-received updates.
-
-Components not subscribed to cart state remained untouched.
-
-This is the primary performance advantage of Zustand.
-
----
-
-## Render Counter Findings
-
-Observed render counts:
+### Render Counter Findings
 
 ```text
 Header        → 10
@@ -365,11 +229,7 @@ Render Count = 2
 
 even after multiple cart updates.
 
-This confirms that Zustand prevented unnecessary re-renders.
-
----
-
-## Zustand Advantages
+### Advantages
 
 ✅ Minimal boilerplate
 
@@ -383,40 +243,145 @@ This confirms that Zustand prevented unnecessary re-renders.
 
 ✅ No provider nesting
 
-✅ Easy learning curve
-
----
-
-## Zustand Limitations
+### Limitations
 
 * No built-in time travel debugging
 * Requires external dependency
-* Less structured than Redux Toolkit for large enterprise applications
+* Less structured than Redux Toolkit
+
+### Conclusion
+
+Zustand delivered the best rendering performance in this project. Selector-based subscriptions prevented unnecessary component updates and significantly reduced render duration.
+
+---
+
+# Redux Toolkit Implementation
+
+## Architecture
+
+```text
+ReactRedux.Provider
+ └── App
+      ├── Header
+      ├── ProductListPage
+      └── CartSidebar
+           └── CartItem
+```
+
+### Redux Structure
+
+```text
+Store
+├── cartSlice
+├── userSlice
+└── uiSlice
+```
+
+### Slices Created
+
+* cartSlice
+* userSlice
+* uiSlice
+
+---
+
+# Redux Toolkit Profiling Results
+
+## Test Scenario
+
+* Action: Add To Cart
+* Repeated: 10 Times
+* Tool: React DevTools Profiler
+* Environment: Development Mode
+
+### Findings
+
+Observed updates:
+
+* Header re-rendered
+* CartSidebar re-rendered
+* CartItem re-rendered
+
+Observed non-updates:
+
+* ProductListPage remained stable
+* ProductCard components remained stable
+
+### Ranked Chart Analysis
+
+| Component   | Render Duration |
+| ----------- | --------------- |
+| CartSidebar | 1.8 ms          |
+| Header      | 1.0 ms          |
+| CartItem    | 0.8 - 0.9 ms    |
+
+### Update Cause Analysis
+
+```text
+What caused this update?
+
+Header
+CartSidebar
+```
+
+### Render Counter Findings
+
+```text
+Header        → 10
+ProductList   → 2
+CartSidebar   → 10
+ProductCard   → 2
+CartItem      → Dynamic
+```
+
+### Advantages
+
+✅ Excellent performance
+
+✅ Predictable state management
+
+✅ Centralized architecture
+
+✅ Redux DevTools support
+
+✅ Time travel debugging
+
+✅ Enterprise scalability
+
+### Limitations
+
+* More boilerplate than Zustand
+* Slightly steeper learning curve
+* Requires understanding reducers and slices
+
+### Conclusion
+
+Redux Toolkit delivered performance very close to Zustand while providing stronger tooling, debugging, and scalability for large applications.
 
 ---
 
 # Performance Comparison
 
-## Context API vs Zustand
+## Context API vs Zustand vs Redux Toolkit
 
-| Metric                 | Context API (Split) | Zustand      |
-| ---------------------- | ------------------- | ------------ |
-| Render Duration        | ~24 ms              | ~5.7 ms      |
-| Highest Render Cost    | 3.2 ms              | 1.5 ms       |
-| Re-render Optimization | Good                | Excellent    |
-| Boilerplate            | Medium              | Low          |
-| Provider Nesting       | Required            | Not Required |
-| Selector Support       | No                  | Yes          |
+| Metric                 | Context API (Split) | Zustand      | Redux Toolkit |
+| ---------------------- | ------------------- | ------------ | ------------- |
+| Render Duration        | ~24 ms              | ~5.7 ms      | ~6.5 ms       |
+| Highest Render Cost    | 3.2 ms              | 1.5 ms       | 1.8 ms        |
+| Re-render Optimization | Good                | Excellent    | Excellent     |
+| Boilerplate            | Medium              | Low          | High          |
+| Provider Nesting       | Required            | Not Required | Required      |
+| Selector Support       | No                  | Yes          | Yes           |
 
 ### Result
 
-Zustand reduced rendering duration by approximately 76% compared to the optimized Context API implementation.
+* Zustand reduced rendering duration by approximately 76% compared to Context API.
+* Redux Toolkit delivered nearly identical rendering performance to Zustand.
+* Both Zustand and Redux Toolkit significantly outperformed Context API.
 
 ---
 
 # Screenshot Artifacts
-
-## Profiling Folder
 
 ```text
 profiling/
@@ -425,32 +390,44 @@ profiling/
 ├── context-optimized-update-analysis.png
 ├── zustand-flamegraph.png
 ├── zustand-ranked.png
-└── zustand-update-analysis.png
+├── zustand-update-analysis.png
+├── redux-flamegraph.png
+├── redux-ranked.png
+└── redux-update-analysis.png
 ```
 
 ---
 
-# Current Conclusion
+# Final Ranking
 
-The optimized Context API implementation improved performance significantly over the naive approach.
-
-However, Zustand delivered the best results so far by ensuring that only subscribed components re-rendered when state changed.
-
-Based on current profiling results:
-
-1. Zustand (Best Performance)
-2. Context API (Split Contexts)
-3. Context API (Single Context)
-
-Redux Toolkit implementation and benchmarking will be completed in the next phase of the project.
+| Rank | Solution            | Reason                                         |
+| ---- | ------------------- | ---------------------------------------------- |
+| 🥇 1 | Zustand             | Best performance with minimal code             |
+| 🥈 2 | Redux Toolkit       | Similar performance with better tooling        |
+| 🥉 3 | Context API (Split) | Improved but still causes context-wide updates |
+| 4    | Context API (Naive) | Highest unnecessary re-renders                 |
 
 ---
 
-# Upcoming Work
+# Final Conclusion
 
-* Redux Toolkit Implementation
-* Redux Toolkit Profiling
+This project demonstrates how state management choices directly affect application performance and scalability.
+
+Key findings:
+
+* Context API is suitable for small applications but becomes less efficient as shared state grows.
+* Zustand provides the best balance between simplicity and performance.
+* Redux Toolkit offers enterprise-grade architecture, tooling, and debugging while maintaining excellent performance.
+* Selector-based subscriptions used by Zustand and Redux Toolkit significantly reduce unnecessary re-renders compared to Context API.
+
+Based on the benchmark results, Zustand is the preferred choice for most modern React applications, while Redux Toolkit remains the strongest option for large-scale enterprise projects requiring advanced debugging and standardized architecture.
+
+---
+
+# Next Steps
+
 * Bundle Size Analysis
-* Final Benchmark Comparison
-* Docker Deployment
-* Final Project Documentation
+* Dockerization
+* GitHub Repository Documentation
+* Final README Preparation
+* Project Submission
