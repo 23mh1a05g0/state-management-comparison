@@ -7,9 +7,9 @@ function ProductListPage() {
 
   return (
     <>
-      <h3>
+      <h2 className="section-title">
         Products
-      </h3>
+      </h2>
 
       <small data-testid="render-count">
         Render Count: {renderCount}
