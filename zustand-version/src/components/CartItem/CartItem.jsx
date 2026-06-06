@@ -11,15 +11,11 @@ function CartItem({ item }) {
       <p>₹{item.price}</p>
 
       <p>
-        Quantity:
-        {" "}
-        {item.quantity}
+        Quantity: {item.quantity}
       </p>
 
       <small data-testid="render-count">
-        Render Count:
-        {" "}
-        {renderCount}
+        Render Count: {renderCount}
       </small>
     </div>
   );

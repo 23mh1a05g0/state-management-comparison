@@ -17,23 +17,23 @@ function ProductCard({ product }) {
         alt={product.name}
       />
 
-      <h3>{product.name}</h3>
+      <div className="product-card-content">
+        <h3>{product.name}</h3>
 
-      <p>₹{product.price}</p>
+        <p>₹{product.price}</p>
 
-      <button
-        onClick={() =>
-          addToCart(product)
-        }
-      >
-        Add To Cart
-      </button>
+        <button
+          onClick={() =>
+            addToCart(product)
+          }
+        >
+          Add To Cart
+        </button>
 
-      <small data-testid="render-count">
-        Render Count:
-        {" "}
-        {renderCount}
-      </small>
+        <small data-testid="render-count">
+          Render Count: {renderCount}
+        </small>
+      </div>
     </div>
   );
 }

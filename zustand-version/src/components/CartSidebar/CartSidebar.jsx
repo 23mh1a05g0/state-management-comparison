@@ -13,12 +13,10 @@ function CartSidebar() {
 
   return (
     <aside className="sidebar">
-      <h3>Cart Items</h3>
+      <h3>🛒 Cart Items</h3>
 
       <small data-testid="render-count">
-        Render Count:
-        {" "}
-        {renderCount}
+        Render Count: {renderCount}
       </small>
 
       {items.length === 0 ? (
@@ -32,13 +30,9 @@ function CartSidebar() {
         ))
       )}
 
-      <hr />
-
-      <h4>
-        Total Items:
-        {" "}
-        {items.length}
-      </h4>
+      <div className="total-box">
+        Total Items: {items.length}
+      </div>
     </aside>
   );
 }
