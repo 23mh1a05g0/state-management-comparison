@@ -8,7 +8,10 @@ function App() {
       <Header />
 
       <main className="main-content">
-        <ProductListPage />
+        <section className="products-section">
+          <ProductListPage />
+        </section>
+
         <CartSidebar />
       </main>
     </div>

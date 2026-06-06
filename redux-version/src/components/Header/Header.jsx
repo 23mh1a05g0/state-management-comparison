@@ -1,40 +1,34 @@
-import { useSelector }
-from "react-redux";
-
-import useRenderCount
-from "../../hooks/useRenderCount";
+import { useSelector } from "react-redux";
+import useRenderCount from "../../hooks/useRenderCount";
 
 function Header() {
+  const user = useSelector(
+    (state) => state.user
+  );
 
-  const user =
-    useSelector(
-      (state) => state.user
-    );
-
-  const cartCount =
-    useSelector(
-      (state) =>
-        state.cart.items.length
-    );
+  const cartCount = useSelector(
+    (state) =>
+      state.cart.items.length
+  );
 
   const renderCount =
     useRenderCount();
 
   return (
     <header className="header">
+      <h2>🛒 Shopping Cart</h2>
 
-      <h2>Shopping Cart</h2>
+      <p>
+        User: {user.name}
+      </p>
 
-      <p>User: {user.name}</p>
-
-      <p>Items: {cartCount}</p>
+      <p>
+        Items: {cartCount}
+      </p>
 
       <small data-testid="render-count">
-        Render Count:
-        {" "}
-        {renderCount}
+        Render Count: {renderCount}
       </small>
-
     </header>
   );
 }
